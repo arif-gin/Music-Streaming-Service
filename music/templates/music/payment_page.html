@@ -1,0 +1,176 @@
+{% extends 'music/base.html' %}
+{% load static %}
+{% block title%}Payment{% endblock %}
+
+
+{% block body %}
+
+<style>
+  .StripeElement {
+    box-sizing: border-box;
+
+    height: 40px;
+
+    padding: 10px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }
+  .form-row,
+  .submit-btn,
+  .card-element {
+    width: 100%;
+  }
+  .form-row {
+    padding: 2em;
+  }
+  #paypal-button-container {
+    margin-top: 2em;
+    width: 100%;
+  }
+</style>
+
+  <br>
+  <!-- Alerts -->
+  {% include 'music/alert.html' %}
+
+
+<div class="container" style="margin-bottom:45px; margin-top:50px;">
+
+  <div class="row">
+    <div class="col-sm-6">
+		<h3 class="text-center">Credit Card</h3>
+                        <form method="POST" id="payment-form" class="payment-form">
+                            {% csrf_token %}
+                            <div class="form-row">
+                              <label for="card-element">
+                                Credit or debit card
+                              </label>
+                              <div id="card-element" class="card-element"></div>
+                              <div id="card-errors" role="alert"></div>
+                              <button class="btn btn-info submit-btn" type="submit">
+                                Submit Payment
+                              </button>
+
+                              <div id="paypal-button-container"></div>
+                            </div>
+                          </form>
+	</div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="card-title" style="text-align:center">RyzicMix</h1><hr>
+          <h5 class="card-title" style="text-align:center" id="subs_type">{{type}}</h5>
+          <h2 class="card-title" style="text-align:center">$<span id="money_qty">{{money}}</span></h2><hr>
+          <p class="card-text">
+            <b>- Unlimited Premium Songs</b><br>
+            <b>- Unlimited Download</b><br>
+            {% if type == 'Monthly Subscription' %}
+            <b>- 1 Month Premium Access</b>
+            {% elif type == 'Yearly Subscription' %}
+            <b>- 1 Year Premium Access</b>
+            {% endif %}
+          </p>
+
+        </div>
+      </div>
+    </div>
+
+
+</div>
+</div>
+
+
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<!-- stripe payments -->
+<script>
+  var stripe = Stripe("pk_test_51JicMwE0KuM0o8WdnHzAaut6bLYxDakJWwmE21esxOOTB7RaQ4Idr0pLyB4WS6RpC8yW1wHJxcsqae57FgsnZKL30017IwFGKx");
+
+  var elements = stripe.elements();
+
+  var style = {
+    base: {
+      color: "#32325d",
+      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontSmoothing: "antialiased",
+      fontSize: "16px",
+      "::placeholder": {
+        color: "#aab7c4",
+      },
+    },
+    invalid: {
+      color: "#fa755a",
+      iconColor: "#fa755a",
+    },
+  };
+
+  var card = elements.create("card", { style: style });
+
+  card.mount("#card-element");
+
+  card.on("change", function (event) {
+    var displayError = document.getElementById("card-errors");
+    if (event.error) {
+      displayError.textContent = event.error.message;
+    } else {
+      displayError.textContent = "";
+    }
+  });
+
+  var form = document.getElementById("payment-form");
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    stripe.createToken(card).then(function (result) {
+      if (result.error) {
+        console.log(result.error);
+        var errorElement = document.getElementById("card-errors");
+        errorElement.textContent = result.error.message;
+      } else {
+        stripeTokenHandler(result.token);
+      }
+    });
+  });
+
+  function stripeTokenHandler(token) {
+    var money_qty = document.getElementById('money_qty').innerHTML;
+    var subs_type = document.getElementById('subs_type').innerHTML;
+
+
+    var form = document.getElementById("payment-form");
+    var hiddenInput = document.createElement("input");
+
+    money_and_type = money_qty+','+subs_type+','+token.id
+
+    hiddenInput.setAttribute("type", "hidden");
+    hiddenInput.setAttribute("name", "money_amount");
+    hiddenInput.setAttribute("value", money_and_type);
+
+    form.appendChild(hiddenInput);
+    form.submit();
+  }
+</script>
+<!-- stripe payments -->
+
+
+{% endblock %}
+

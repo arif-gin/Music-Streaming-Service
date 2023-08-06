@@ -1,0 +1,61 @@
+{%extends 'music/base.html'%}
+{% block title%}All Songs{%endblock%}
+
+{%block body%}
+<div class = "container"style =  "padding-top: 3%;">
+
+  {% for i in song reversed %}
+  <div class="card mb-3" style="max-width: 940px; padding-top: 0%;">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src="/media/{{i.image}}" class="card-img" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title" style=" font-weight: 550;">{{i.name}}</h5>
+            <p class="card-text">Singer Name: {{i.singer}}</p>
+            <p class="card-text">Language: {{i.language}}</p>
+            <p class="card-text">Tags: {{i.tags}}</p>
+          <p class="card-text">Movie: {{i.movie}}</p>
+          
+          {% if user.is_authenticated %}
+          <form action="/music/history" method="POST">{% csrf_token %}
+            <input type="hidden" name="music_id" value="{{i.song_id}}">
+            <a href="/music/songs/{{i.song_id}}"><button class="btn btn-outline-primary">Listen Song</button></a>
+          </form>
+          {% else %}
+          <a href="/music/songs/{{i.song_id}}"><button class="btn btn-outline-primary">Listen Song</button></a>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    <nav class="mt-4" aria-label="Page navigation sample">
+      {% if song.has_other_pages %}
+        <ul class="pagination">
+        {% if song.has_previous %}
+          <li class="page-item"><a href="?page={{song.previous_page_number}}" class="page-link">Previous</a></li>
+            {% else %}
+          <li class="page-item disabled"><a href="#" class="page-link">Previous</a></li>
+        {% endif %}
+  
+        {% for i in song.paginator.page_range %}
+          {% if song.number == i %}
+            <li class="page-item active"><a href="" class="page-link">{{i}}</a></li>
+          {% else %}
+            <li class="page-item "><a href="?page={{i}}" class="page-link">{{i}}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if song.has_next %}
+          <li class="page-item "><a href="?page={{song.next_page_number}}" class="page-link">Next</a></li>
+          {% else %}
+          <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+      </nav>
+
+</div>
+{%endblock%}

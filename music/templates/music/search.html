@@ -1,0 +1,42 @@
+{%extends 'music/base.html'%}
+{% block title%}Search{%endblock%}
+
+{% block body %}
+{% if query %}
+<h1 style="color: rgb(158, 60, 60); text-align: center;">Search Results for "{{ query_str }}"</h1>
+</br>
+<div class = "container"style =  "padding-top: 3%;">
+
+  {% for i in query %}
+  <div class="card mb-3" style="max-width: 940px; padding-top: 0%;">
+      <div class="row no-gutters">
+        <div class="col-md-4">
+          <img src="/media/{{i.image}}" class="card-img" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title" style=" font-weight: 550;">{{i.name}}</h5>
+            <p class="card-text">Singer Name: {{i.singer}}</p>
+            <p class="card-text">Tags: {{i.tags}}</p>
+          <p class="card-text">Album: {{i.album}}</p>
+          
+          {% if user.is_authenticated %}
+          <form action="/music/history" method="POST">{% csrf_token %}
+            <input type="hidden" name="music_id" value="{{i.song_id}}">
+            <a href="/music/songs/{{i.song_id}}"><button class="btn btn-outline-danger">Listen Song</button></a>
+          </form>
+          {% else %}
+          <a href="/music/songs/{{i.song_id}}"><button class="btn btn-outline-danger">Listen Song</button></a>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% elif notfound %}
+
+      <h1> This song is not Available</h1>
+      <span style='font-size:100px;'>&#128531;</span>
+    {% endif %}
+  </div>
+{%endblock%}

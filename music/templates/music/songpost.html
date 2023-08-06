@@ -1,0 +1,87 @@
+{%extends 'music/base.html'%}
+{% block title%} {{song.name}}  {%endblock%}
+
+{%block body%}
+
+{% if message%}
+<script>
+    Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: '{{message}}',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    </script>
+{% endif %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6" style = "padding-top: 3%; padding-left: 10%; padding-top: 15%;">
+            <img src="/media/{{song.image}}" alt="" height="300px">
+        </div>
+        <div class="col-md-6" style = "padding-top: 15%;">
+            <h2 style="padding-top: 6%; font-weight: 550; color: #10284e;">Song:  {{song.name}} {% if song.Song_Type == 'Free' %}<button class="btn btn-info mt-2 mx-1">{{song.Song_Type}}</button>{% elif song.Song_Type == 'Premium' %}<button class="btn btn-warning mt-2 mx-1">{{song.Song_Type}}</button>{% endif %}</h2>
+            <h5 style="padding-top: 2%; font-weight: 550; color: #30caa0;">Singer: {{song.singer}}</h5>
+            <h5 style="padding-top: 2%; font-weight: 550;">Album: {{song.album}}</h5>
+            <h5 style="padding-top: 2%; font-weight: 550;">Language: {{song.language}}</h5>
+            <h5 style="padding-top: 2%; font-weight: 550;">Category: {{song.tags}}</h5>
+            <h5 style="padding-top: 2%; font-weight: 550;">Movie: {{song.movie}}</h5>
+
+            {% if song.Song_Type == 'Premium' %}
+                {% if check_my_pr.is_premium %}
+                <audio controls >
+                    <source src="/media/{{song.song}}" type="audio/mp3">
+                </audio>
+
+                <div class="row">
+                <form action="/music/favourites" method="POST">{% csrf_token %}
+                <input type="hidden" name="fav_id" value="{{song.song_id}}">
+                <button type="submit" class="btn btn-outline-success">Add to Favourite</button>
+                </form>
+                <!-- <a href="/media/{{song.song}}" download style="padding-left: 1%;"><button class="btn btn-outline-danger">Download Song</button></a> -->
+                <a href="/media/{{song.song}}" download   style="padding-left: 1%;"><button class="btn btn-outline-danger">Download Song</button></a>
+                </div>
+                {% else %}
+                <audio controls style="padding-top: 2%;" >
+                    <source src="" type="audio/mp3">
+                </audio>
+            <br>
+            <br>
+            <a href="{% url 'subscription' %}" class="btn btn-info mt-2 mx-1">Buy Premium</a>
+                {% endif %}
+            {% else %}
+            <audio controls >
+                <source src="/media/{{song.song}}" type="audio/mp3">
+            </audio>
+
+            <div class="row">
+            <form action="/music/favourites" method="POST">{% csrf_token %}
+            <input type="hidden" name="fav_id" value="{{song.song_id}}">
+            <button type="submit" class="btn btn-outline-success">Add to Favourite</button>
+            </form>
+            <a href="/media/{{song.song}}" download  style="padding-left: 1%;"><button class="btn btn-outline-danger">Download Song</button></a>
+            </div>
+
+            {% endif %}
+
+
+
+
+
+
+
+
+            <div style="padding-top: 2%;">
+
+
+
+        </div>
+
+        
+    
+    </div>
+</div>
+</div>
+</br>
+</br>
+{%endblock%}

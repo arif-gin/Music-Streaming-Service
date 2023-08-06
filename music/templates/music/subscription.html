@@ -1,0 +1,60 @@
+{% extends 'music/base.html'%}
+{% block title%}Subcription{% endblock %}
+
+{% block body %}
+{% load static %}
+  <br>
+  <!-- Alerts -->
+  {% include 'music/alert.html' %}
+
+
+<div class="container" style="margin-bottom:45px;">
+<h2 style = "padding-bottom: 22px; padding-top: 2%; font-family: 'Verdana'; text-align:center; color:#FFBA01;">Choose Subscription</h2>
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="card-title" style="text-align:center">RyzicMix</h1><hr>
+          <h5 class="card-title" style="text-align:center">Monthly Subscription</h5>
+          <h2 class="card-title" style="text-align:center">$12</h2><hr>
+          <p class="card-text">
+            <b>- Unlimited Premium Songs</b><br>
+            <b>- Unlimited Download</b><br>
+            <b>- 1 Month Premium Access</b>
+          </p>
+          <form method="GET" action="{% url 'payment_page' %}">
+            <input type="hidden" name="subscription_type" value="monthly">
+            <button type="submit" class="btn btn-warning">BUY</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-body">
+          <h1 class="card-title" style="text-align:center">RyzicMix</h1><hr>
+          <h5 class="card-title" style="text-align:center">Yearly Subscription</h5>
+          <h2 class="card-title" style="text-align:center">$110</h2><hr>
+          <p class="card-text">
+            <b>- Unlimited Premium Songs</b><br>
+            <b>- Unlimited Download</b><br>
+            <b>- 1 Year Premium Access</b>
+
+          </p>
+          <form method="GET" action="{% url 'payment_page' %}">
+            <input type="hidden" name="subscription_type" value="yearly">
+            <button type="submit" class="btn btn-warning">BUY</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+
+
+
+
+</div>
+
+{% endblock %}
